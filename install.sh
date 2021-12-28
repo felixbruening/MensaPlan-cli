@@ -15,14 +15,18 @@ echo "-> python3"
 echo "-> pip"
 echo "################################"
 
+echo "Checking required packages...."
+echo "INSTALLED:"
 if ! pip list | grep -F bs4
 then
     echo "Installing 'bs4' ..."
     pip install bs4
 fi
 
-sudo touch RUN_SCRIPT
-sudo echo "#!/bin/bash" >> RUN_SCRIPT
-sudo echo "python3 $PWD/mensaplan.py | less" >> RUN_SCRIPT
-sudo chmod +x RUN_SCRIPT
-sudo ln -s RUN_SCRIPT EXECUTABLE
+echo "Install scripts ..."
+touch $RUN_SCRIPT
+echo "#!/bin/bash" >> $RUN_SCRIPT
+echo "python3 $PWD/mensaplan.py | less" >> $RUN_SCRIPT
+chmod +x $RUN_SCRIPT
+echo "Link executable...."
+ln -s $RUN_SCRIPT $EXECUTABLE
