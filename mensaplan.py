@@ -3,7 +3,7 @@
 ##
 ## Author        : Felix Bruening
 ## Date          : 2019
-## Last changed  : 2021-10-12
+## Last changed  : 2021-12-28
 ## 
 ##
 
@@ -16,7 +16,7 @@ import re
 
 # --------------------------------------------------------------
 # Global option variables
-verbose = False
+quiet = False
 uni_mensa = False
 cafe_unique = False
 show_all = False
@@ -24,10 +24,10 @@ show_all = False
 # --------------------------------------------------------------
 # Parse Options
 parser = OptionParser()
-parser.add_option("-v", "--verbose",
+parser.add_option("-q", "--quiet",
                     help="shows only main meals",
                     action="store_true",
-                    dest="verbose")
+                    dest="quiet")
 parser.add_option("-m", "--mensa",
                     help="prints meals of mensa uni bremen",
                     action="store_true",
@@ -46,8 +46,8 @@ parser.add_option("-a", "--show-all",
 
 (options, args) = parser.parse_args()
 
-if options.verbose:
-    verbose = True
+if options.quiet:
+    quiet = True
 if options.uni_mensa:
     uni_mensa = True
     cafe_unique = False
@@ -87,7 +87,7 @@ def print_mensa_meal():
     print("##")
     print("##########################################\n")
     for i in range(0, len(mensa_food_categories)):
-        if verbose and i >= 2:
+        if quiet and i >= 2:
             return
         food_descr_sec = foods[i].find('td', class_="field field-name-field-description")
         food_descr = remove_sup_section(food_descr_sec)

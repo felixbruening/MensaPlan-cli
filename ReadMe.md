@@ -4,7 +4,7 @@ This python-script prints the todays meals of the Uni-Bremen Mensa or of the Caf
 Following options are available:
 
     -h, --help      show this help message and exit 
-    -v, --verbose   shows only main meals 
+    -q, --quiet     shows only main meals 
     -m, --mensa     prints meals of mensa uni bremen 
     -u, --unique    prints meals of cafe unique 
     -a, --show-all  prints meals of cafe unique and uni-mensa 
