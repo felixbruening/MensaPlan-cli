@@ -13,6 +13,8 @@ import urllib.request as urllib2
 from optparse import OptionParser
 import datetime
 import re
+from rich.console import Console
+from rich.table import Table
 
 # --------------------------------------------------------------
 # Global option variables
@@ -57,6 +59,8 @@ if options.cafe_unique:
 if options.show_all:
     show_all = True
 
+console = Console()
+
 # --------------------------------------------------------------
 # Uni Bremen Mensa
 UNI_MENSA_URL = "https://www.stw-bremen.de/de/mensa/uni-mensa"
@@ -86,18 +90,23 @@ def print_mensa_meal():
     print("## Today's date: " + datetime.datetime.now().strftime("%A, den %d.%m.%Y"))
     print("##")
     print("##########################################\n")
+
+
     for i in range(0, len(mensa_food_categories)):
+        table = Table(show_header=True, show_lines=True)
+        table.add_column(mensa_food_categories[i], width=50)
+        table.add_column("Preis (Stud.)", justify="right")
+        table.add_column("Preis (Bed.)", justify="right")
+
         if quiet and i >= 2:
             return
         food_descr_sec = foods[i].find('td', class_="field field-name-field-description")
         food_descr = remove_sup_section(food_descr_sec)
         price_stud = foods[i].find('td', class_="field field-name-field-price-students").text
         price_emp  = foods[i].find('td', class_="field field-name-field-price-employees").text
-        string = mensa_food_categories[i] + ": \n===============================\n"
-        string += "\n" + food_descr + "\n --> Preis (Studenten):   " + price_stud 
-        string += "\n --> Preis (Bedienstete): " + price_emp 
-        print(str(string))
-        print("\n")
+
+        table.add_row(food_descr, price_stud, price_emp)    
+        console.print(table)
 # --------------------------------------------------------------
 
 # --------------------------------------------------------------
@@ -136,10 +145,14 @@ def print_unique_meal():
     print("## Today's date: " + datetime.datetime.now().strftime("%A, den %d.%m.%Y"))
     print("##")
     print("##########################################\n")
+    table = Table(show_header=True, show_lines=True)
+    table.add_column("Gericht", width=50)
+    table.add_column("Preis", justify="right")
 
     for i in range(0, len(meals)):
-        print(meals[i])
-        print(" --> Preis: {0}\n".format(prices[i]))
+        table.add_row(meals[i], prices[i])
+    
+    console.print(table)
 
 # --------------------------------------------------------------
 
