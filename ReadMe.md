@@ -9,12 +9,15 @@ Following options are available:
     -u, --unique    prints meals of cafe unique 
     -a, --show-all  prints meals of cafe unique and uni-mensa 
 
-
+# Example
+![Example](example.png)
 
 # Required python3-libraries
 $ pip3 install `BeautifulSoup` 
 
 $ pip3 install `bs4`
+
+
 
 # Usage
 $ python3 `mensaplan.py` [options]
