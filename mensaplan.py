@@ -67,9 +67,11 @@ UNI_MENSA_URL = "https://www.stw-bremen.de/de/mensa/uni-mensa"
 this_parser = 'html.parser'
 mensa_food_categories = ['Ausgabe 1', 
                          'Ausgabe 2', 
-                         'Vegetarische Theke', 
-                         'Cafe Central "to-go" Angebot 1', 
-                         'Cafe Central "to-go" Angebot 2']
+                         'Ausgabe 3', 
+                         'kombinierBar',
+                         'kombinierBar (wöchentlich wechselnd)',
+                         'Salatangebot'
+                         ]
 
 # remove a weird html-tag from html-table section
 # no elegant solution but it works
@@ -84,14 +86,6 @@ def print_mensa_meal():
     soup = BeautifulSoup(html, this_parser)
     foods = soup.findAll('table', class_='food-category')
 
-    print("##########################################")
-    print("## Mensa plan University of Bremen") 
-    print("##")
-    print("## Today's date: " + datetime.datetime.now().strftime("%A, den %d.%m.%Y"))
-    print("##")
-    print("##########################################\n")
-
-
     for i in range(0, len(mensa_food_categories)):
         table = Table(show_header=True, show_lines=True)
         table.add_column(mensa_food_categories[i], width=50)
@@ -100,12 +94,31 @@ def print_mensa_meal():
 
         if quiet and i >= 2:
             return
-        food_descr_sec = foods[i].find('td', class_="field field-name-field-description")
-        food_descr = remove_sup_section(food_descr_sec)
-        price_stud = foods[i].find('td', class_="field field-name-field-price-students").text
-        price_emp  = foods[i].find('td', class_="field field-name-field-price-employees").text
+        
+        all_foods_descr = foods[i].findAll('td', class_="field field-name-field-description")
+        all_foods_price_stud = foods[i].findAll('td', class_="field field-name-field-price-students")
+        all_foods_price_emp = foods[i].findAll('td', class_="field field-name-field-price-employees")
 
-        table.add_row(food_descr, price_stud, price_emp)    
+        all_foods_descr_text = []
+
+        for idx in range(len(all_foods_descr)):
+            if all_foods_descr[idx].text != 'Täglich wechselndes Saucen-Angebot':
+                food_descr = remove_sup_section(all_foods_descr[idx])
+                all_foods_descr_text.append(food_descr)
+
+        for i in range(len(all_foods_descr_text)):
+            if i >= len(all_foods_price_stud):
+                the_student_price = ""    
+            else:
+                the_student_price = all_foods_price_stud[i].text
+
+            if i >= len(all_foods_price_emp):
+                the_employee_price = ""
+            else:    
+                the_employee_price = all_foods_price_emp[i].text
+
+            table.add_row(all_foods_descr_text[i], the_student_price, the_employee_price)
+            
         console.print(table)
 # --------------------------------------------------------------
 
