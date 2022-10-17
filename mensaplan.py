@@ -20,8 +20,6 @@ from rich.table import Table
 # Global option variables
 quiet = False
 uni_mensa = False
-cafe_unique = False
-show_all = False
 
 # --------------------------------------------------------------
 # Parse Options
@@ -35,16 +33,6 @@ parser.add_option("-m", "--mensa",
                     action="store_true",
                     default=True,
                     dest="uni_mensa")
-parser.add_option("-u", "--unique",
-                    help="prints meals of cafe unique",
-                    action="store_true",
-                    default=False,
-                    dest="cafe_unique")
-parser.add_option("-a", "--show-all",
-                    help="prints meals of cafe unique and uni-mensa",
-                    action="store_true",
-                    default=False,
-                    dest="show_all")
 
 (options, args) = parser.parse_args()
 
@@ -52,12 +40,6 @@ if options.quiet:
     quiet = True
 if options.uni_mensa:
     uni_mensa = True
-    cafe_unique = False
-if options.cafe_unique:
-    cafe_unique = True
-    uni_mensa = False
-if options.show_all:
-    show_all = True
 
 console = Console()
 
@@ -122,55 +104,4 @@ def print_mensa_meal():
         console.print(table)
 # --------------------------------------------------------------
 
-# --------------------------------------------------------------
-# Cafe Unique Bremen Campus
-UNIQUE_MENU = "https://www.uni-bremen.de/speiseplaene"
-
-def print_unique_meal():
-    html_dump = urllib2.urlopen(UNIQUE_MENU)
-    soup = BeautifulSoup(html_dump, this_parser)
-    food_table = soup.findAll('tr', class_="tr-odd")
-    content = food_table[0]
-    sec_row = content.findAll(lambda item: item.name == 'td')    
-    parts = sec_row[1].text.split("€")
-
-    meals = []
-    for s in parts:
-        s = re.sub('[0-9,]', '', s)
-        meals.append(s)
-    
-    meals = [x for x in meals if x and x != " "]
-
-    # 'prices' is a list of orderes price-strings
-    allPrices = sec_row[1].findAll(lambda item: item.name == 'strong')
-    prices = []
-    for var in allPrices:
-        p2 = str(var)
-        prices.append(p2.replace("<strong>", "").replace("</strong>", ""))
-
-    if len(prices) != len(meals):
-        print("[ERROR] Length of price-row and meal-row are different!")
-        return
-
-    print("##########################################")
-    print("## Meal-plan Cafe Unique") 
-    print("##")
-    print("## Today's date: " + datetime.datetime.now().strftime("%A, den %d.%m.%Y"))
-    print("##")
-    print("##########################################\n")
-    table = Table(show_header=True, show_lines=True)
-    table.add_column("Gericht", width=50)
-    table.add_column("Preis", justify="right")
-
-    for i in range(0, len(meals)):
-        table.add_row(meals[i], prices[i])
-    
-    console.print(table)
-
-# --------------------------------------------------------------
-
-if show_all or uni_mensa:
-    print_mensa_meal()
-
-if show_all or cafe_unique:
-    print_unique_meal()
+print_mensa_meal()
